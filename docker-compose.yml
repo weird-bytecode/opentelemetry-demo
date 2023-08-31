@@ -641,6 +641,7 @@ services:
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
       - "${GRAFANA_SERVICE_PORT}"
+      - 3000:3000
     logging: *logging
 
   
