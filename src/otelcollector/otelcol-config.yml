@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 receivers:
   otlp:
     protocols:
@@ -12,17 +11,26 @@ receivers:
             - "http://*"
             - "https://*"
 
-exporters:
-  logging:
-
 processors:
   batch:
+    send_batch_size: 50000
+    timeout: 60s
   filter:
     metrics:
       exclude:
         match_type: strict
         metric_names:
           - queueSize
+
+exporters:
+  logging:
+  awss3:
+    s3uploader:
+      region: "us-east-1"
+      s3_bucket: "otel"
+      s3_prefix: "data"
+      s3_partition: "hour"
+      endpoint: http://minio:9000/otel
 
 connectors:
   spanmetrics:
@@ -32,12 +40,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, spanmetrics]
+      exporters: [spanmetrics, awss3]
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter, batch]
-      exporters: [logging]
+      exporters: [awss3]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [awss3]

@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 exporters:
   otlp:
     endpoint: "jaeger:4317"
@@ -16,6 +15,6 @@ exporters:
 service:
   pipelines:
     traces:
-      exporters: [otlp, logging, spanmetrics]
+      exporters: [otlp, logging, spanmetrics, awss3]
     metrics:
-      exporters: [prometheus, logging]
+      exporters: [prometheus, logging, awss3]
